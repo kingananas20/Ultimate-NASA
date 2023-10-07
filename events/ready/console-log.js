@@ -25,22 +25,5 @@ async function fetchData(url) {
 }
 
 module.exports = (client) => {
-  image = fetchData(
-    `https://api.nasa.gov/planetary/apod?api_key=${process.env.APIKEY}`
-  );
-
-  async function changeAvatar() {
-    const imageUrl = image.hdurl;
-
-    // Set the bot's avatar to the current image
-    try {
-      await client.user.setAvatar(imageUrl);
-      console.log(`Changed avatar to ${imageUrl}`);
-    } catch (error) {
-      console.error("Error changing avatar:", error);
-    }
-  }
-
-  changeAvatar();
   console.log(`${client.user.tag} is online.`);
 };
