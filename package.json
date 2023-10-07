@@ -2,7 +2,7 @@
   "name": "ultimate-nasa",
   "version": "1.0.0",
   "description": "Discord bot that access the nasa API",
-  "main": "index.js",
+  "main": "scr/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
