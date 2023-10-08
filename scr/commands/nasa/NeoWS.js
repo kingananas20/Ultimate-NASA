@@ -70,26 +70,82 @@ module.exports = {
         const data = await getData(url);
 
         diameterMeters =
-          data["estimated_diameter"]["meters"]["estimated_diameter_min"] -
-          data["estimated_diameter"]["meters"]["estimated_diameter_max"];
+          (data["estimated_diameter"]["meters"]["estimated_diameter_min"] +
+            data["estimated_diameter"]["meters"]["estimated_diameter_max"]) /
+          2;
         diameterFeet =
-          data["estimated_diameter"]["feet"]["estimated_diameter_min"] -
-          data["estimated_diameter"]["feet"]["estimated_diameter_max"];
+          (data["estimated_diameter"]["feet"]["estimated_diameter_min"] +
+            data["estimated_diameter"]["feet"]["estimated_diameter_max"]) /
+          2;
 
         let embed = new EmbedBuilder()
           .setTitle(`${data["name"]} (${data["id"]})`)
           .setDescription(
             `Last seen: ${data["orbital_data"]["last_observation_date"]}`
           )
-          .addFields({
-            name: "Type",
-            value: data["orbital_data"]["orbit_class"]["orbit_class_type"],
-            inline: true,
-          })
-          .addFields({
-            name: "Diameter in Meters (Feet)",
-            value: `${diameterMeters} (${diameterFeet})`,
-          });
+          .setColor("DarkVividPink")
+          .addFields(
+            {
+              name: "Estimated Diameter",
+              value: `${diameterMeters}m (${diameterFeet}f)`,
+              inline: true,
+            },
+            {
+              name: "Absolute Magnitude",
+              value: `${data["absolute_magnitude_h"]}`,
+              inline: true,
+            },
+            {
+              name: "Hazardous",
+              value: `${data["is_potentially_hazardous_asteroid"]}`,
+              inline: true,
+            },
+            { name: "\u200B", value: "\u200B" },
+            {
+              name: "Orbital Data",
+              value: `Uncertainty: ${data["orbital_data"]["orbit_uncertainty"]}`,
+            },
+            {
+              name: "Type",
+              value: `${data["orbital_data"]["orbit_class"]["orbit_class_type"]}`,
+              inline: true,
+            },
+            {
+              name: "Description",
+              value: `${data["orbital_data"]["orbit_class"]["orbit_class_description"]}`,
+              inline: true,
+            },
+            {
+              name: "Range",
+              value: `${data["orbital_data"]["orbit_class"]["orbit_class_range"]}`,
+              inline: true,
+            },
+            {
+              name: "Perihelion",
+              value: `${data["orbital_data"]["perihelion_distance"]} AU`,
+              inline: true,
+            },
+            {
+              name: "Aphelion",
+              value: `${data["orbital_data"]["aphelion_distance"]} AU`,
+              inline: true,
+            },
+            {
+              name: "Inclination",
+              value: `${data["orbital_data"]["inclination"]}°`,
+              inline: true,
+            },
+            {
+              name: "Eccentricity",
+              value: `${data["orbital_data"]["eccentricity"]}`,
+              inline: true,
+            },
+            {
+              name: "Semi-Major-Axis",
+              value: `${data["orbital_data"]["semi_major_axis"]} AU`,
+              inline: true,
+            }
+          );
 
         interaction.reply({ embeds: [embed] });
       }
