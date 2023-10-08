@@ -57,6 +57,7 @@ module.exports = {
 
     if (subcommand === "date") {
       const date = interaction.options.get("date");
+      const description = interaction.options.get("description") || true;
 
       if (date) {
         if (isDateInRange(date["value"]) && !isCurrentDate(date["value"]))
@@ -68,20 +69,20 @@ module.exports = {
       async function fetchData(url) {
         try {
           const data = await getData(url);
+          const image = data["thumbnail_url"] || data["url"];
+          const color = await ColorThief.getColor(image);
 
-          const embed = new EmbedBuilder()
-            .setTitle(`${data["title"]} (${data["date"]})`)
-            .setDescription(`${data["explanation"]}`);
+          let embed = new EmbedBuilder()
+            .setTitle(`${data["title"]}`)
+            .setImage(image)
+            .setColor(color);
 
-          if (data["media_type"] == "video")
-            embed
-              .setURL(data["url"])
-              .setImage(data["thumbnail_url"])
-              .setColor("DarkAqua");
-          else
-            embed
-              .setImage(data["url"])
-              .setColor(await ColorThief.getColor(data["url"]));
+          if (description === true)
+            embed.setDescription(`${data["explanation"]}`);
+
+          if (data["media_type"] === "video") {
+            embed.setURL(data["url"]);
+          }
 
           await interaction.reply({ embeds: [embed.toJSON()] });
         } catch (error) {
@@ -92,29 +93,10 @@ module.exports = {
       fetchData(url);
     }
 
-    if (subcommand === "range") {
-      let count = interaction.options.get("count") || 1;
-
-      if (count !== null) {
-        if (count.value <= 9) {
-          url += `&count=${count.value}`;
-        } else url += `&count=9`;
-      } else url += `&count=1`;
-
+    if (subcommand === "random") {
       async function fetchData(url) {
         try {
           const data = await getData(url);
-          let embed = new EmbedBuilder().setTitle(
-            `${count.value} randomnly chosen APOD(s)`
-          );
-
-          data.forEach(function (value) {
-            embed.addFields({
-              name: value["title"],
-              value: value["date"],
-              inline: true,
-            });
-          });
 
           await interaction.reply({ embeds: [embed] });
         } catch (error) {
@@ -128,7 +110,7 @@ module.exports = {
 
   data: new SlashCommandBuilder()
     .setName("apod")
-    .setDescription("Astronomy picture of the day.")
+    .setDescription("Astronomy picture of the day")
     .addSubcommand((subcommand) =>
       subcommand
         .setName("date")
@@ -150,16 +132,12 @@ module.exports = {
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("range")
-        .setDescription(
-          "Get the date and title of a specified amount of randomnly chosen APODs"
-        )
-        .addIntegerOption((option) =>
+        .setName("random")
+        .setDescription("Get the picture of a random date.")
+        .addBooleanOption((option) =>
           option
-            .setName("count")
-            .setDescription(
-              "Amount for randomnly chosen images (max. 9) or if nothing specified 1."
-            )
+            .setName("description")
+            .setDescription("Should there be a description (default true).")
             .setRequired(false)
         )
     ),

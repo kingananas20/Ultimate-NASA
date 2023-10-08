@@ -1,6 +1,6 @@
 {
   "name": "ultimate-nasa",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Discord bot that access the nasa API",
   "main": "scr/index.js",
   "scripts": {
