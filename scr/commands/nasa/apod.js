@@ -94,9 +94,27 @@ module.exports = {
     }
 
     if (subcommand === "random") {
+      const description = interaction.options.get("description") || true;
+
+      url += `&count=1&thumbs=true`;
+
       async function fetchData(url) {
         try {
           const data = await getData(url);
+          const image = data[0]["thumbnail_url"] || data[0]["url"];
+          const color = await ColorThief.getColor(image);
+
+          let embed = new EmbedBuilder()
+            .setTitle(`${data[0]["title"]}`)
+            .setImage(image)
+            .setColor(color);
+
+          if (description === true)
+            embed.setDescription(`${data[0]["explanation"]}`);
+
+          if (data[0]["media_type"] === "video") {
+            embed.setURL(data[0]["url"]);
+          }
 
           await interaction.reply({ embeds: [embed] });
         } catch (error) {
