@@ -1,8 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 require("dotenv").config();
 
-let url = `https://api.nasa.gov/neo/rest/v1/`;
-
 function isValidDate(dateString) {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   return dateRegex.test(dateString);
@@ -53,12 +51,62 @@ function getData(url) {
 module.exports = {
   run: ({ interaction }) => {
     const subcommand = interaction.options.getSubcommand();
+    let url = `https://api.nasa.gov/neo/rest/v1/`;
 
     if (subcommand === "feed") {
-      const date = interaction.options.get("date");
-      const end_date = interaction.options.get("end-date");
+      let date = interaction.options.get("date");
 
       url += `feed?api_key=${process.env.APIKEY}`;
+
+      if (date && isValidDate(date["value"])) {
+        url += `&start_date=${date["value"]}&end_date=${date["value"]}`;
+        date = date["value"];
+      } else {
+        url += `&start_date=${getDate()}&end_date=${getDate()}`;
+        date = getDate();
+      }
+      console.log(url);
+
+      async function fetchData(url) {
+        let data = await getData(url);
+
+        if (data && data.near_earth_objects && data.near_earth_objects[date]) {
+          data = data.near_earth_objects[date];
+
+          let embed = new EmbedBuilder()
+            .setTitle(`Near Earth Objects ${date}`)
+            .setDescription(`All the NEOs from ${date}`)
+            .setColor("DarkVividPink");
+          let neos = [];
+
+          let length = 0;
+          if (data.length < 25) length = data.length;
+          else length = 25;
+
+          for (let i = 0; i < length; i++) {
+            let asteroid = data[i];
+            let name = asteroid["name"];
+            let id = asteroid["id"];
+
+            field = {
+              name: `${name}`,
+              value: `${id}`,
+              inline: true,
+            };
+
+            neos.push(field);
+          }
+
+          embed.addFields(neos);
+
+          interaction.reply({ embeds: [embed] });
+          neos = [];
+        } else {
+          interaction.reply("Data not available for the specified date.");
+        }
+      }
+
+      fetchData(url);
     }
 
     if (subcommand === "lookup") {
@@ -156,7 +204,7 @@ module.exports = {
 
   data: new SlashCommandBuilder()
     .setName("neows")
-    .setDescription("Near Earth Object Web Service")
+    .setDescription("Near Earth Object Web Service.")
     .addSubcommand((subcommand) =>
       subcommand
         .setName("feed")
@@ -167,12 +215,6 @@ module.exports = {
           option
             .setName("date")
             .setDescription("The start date of the range (default = today).")
-            .setRequired(false)
-        )
-        .addStringOption((option) =>
-          option
-            .setName("end-date")
-            .setDescription("The end date of the range (default = date)")
             .setRequired(false)
         )
     )

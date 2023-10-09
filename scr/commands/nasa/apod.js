@@ -2,8 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const ColorThief = require("colorthief");
 require("dotenv").config();
 
-let url = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APIKEY}`;
-
 function isValidDate(dateString) {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   return dateRegex.test(dateString);
@@ -54,6 +52,7 @@ function getData(url) {
 module.exports = {
   run: ({ interaction }) => {
     const subcommand = interaction.options.getSubcommand();
+    let url = `https://api.nasa.gov/planetary/apod?api_key=${process.env.APIKEY}`;
 
     if (subcommand === "date") {
       const date = interaction.options.get("date");
