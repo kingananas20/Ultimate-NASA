@@ -74,7 +74,8 @@ module.exports = {
           let embed = new EmbedBuilder()
             .setTitle(`${data["title"]}`)
             .setImage(image)
-            .setColor(color);
+            .setColor(color)
+            .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
           if (description === true)
             embed.setDescription(`${data["explanation"]}`);
@@ -106,7 +107,8 @@ module.exports = {
           let embed = new EmbedBuilder()
             .setTitle(`${data[0]["title"]}`)
             .setImage(image)
-            .setColor(color);
+            .setColor(color)
+            .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
           if (description === true)
             embed.setDescription(`${data[0]["explanation"]}`);

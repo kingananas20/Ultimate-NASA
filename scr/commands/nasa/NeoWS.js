@@ -46,7 +46,6 @@ module.exports = {
         url += `&start_date=${getDate()}&end_date=${getDate()}`;
         date = getDate();
       }
-      console.log(url);
 
       async function fetchData(url) {
         let data = await getData(url);
@@ -57,7 +56,8 @@ module.exports = {
           let embed = new EmbedBuilder()
             .setTitle(`Near Earth Objects ${date}`)
             .setDescription(`All the NEOs from ${date}`)
-            .setColor("DarkVividPink");
+            .setColor("DarkVividPink")
+            .setFooter({ text: "Provided by Near Earth Objects Web Service" });
           let neos = [];
 
           let length = 0;
@@ -113,6 +113,7 @@ module.exports = {
             `Last seen: ${data["orbital_data"]["last_observation_date"]}`
           )
           .setColor("DarkVividPink")
+          .setFooter({ text: "Provided by Near Earth Objects Web Service" })
           .addFields(
             {
               name: "Estimated Diameter",
