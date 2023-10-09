@@ -6,25 +6,6 @@ function isValidDate(dateString) {
   return dateRegex.test(dateString);
 }
 
-function isDateInRange(dateString) {
-  if (isValidDate(dateString)) {
-    const inputDate = new Date(dateString);
-    const minDate = new Date("1995-06-16");
-    const currentDate = new Date();
-
-    return minDate < inputDate && inputDate < currentDate;
-  } else {
-    return false;
-  }
-}
-
-function isCurrentDate(dateString) {
-  const currentDate = new Date();
-  const formattedCurrentDate = currentDate.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
-
-  return dateString === formattedCurrentDate;
-}
-
 function getDate() {
   const currentDate = new Date();
 
