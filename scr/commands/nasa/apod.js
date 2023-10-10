@@ -160,4 +160,6 @@ module.exports = {
             .setRequired(false)
         )
     ),
+
+  options: { devOnly: false },
 };

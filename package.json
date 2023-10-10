@@ -1,6 +1,6 @@
 {
   "name": "ultimate-nasa",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Discord bot that access the nasa API",
   "main": "scr/index.js",
   "scripts": {
@@ -10,8 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "colorthief": "^2.4.0",
+    "commandkit": "^0.1.6",
     "discord.js": "^14.13.0",
-    "djs-commander": "^0.0.50",
     "dotenv": "^16.3.1"
   }
 }
