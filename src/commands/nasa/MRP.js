@@ -80,7 +80,7 @@ module.exports = {
           .setCustomId("backmrp")
           .setStyle(ButtonStyle.Success);
 
-        const row = new ActionRowBuilder().addComponents(next, back);
+        const row = new ActionRowBuilder().addComponents(back, next);
 
         await interaction.reply({ embeds: [embeds], components: [row] });
       }
