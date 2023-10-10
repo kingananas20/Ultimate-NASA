@@ -57,10 +57,30 @@ module.exports = {
 
       fetchData(url);
     }
+
+    if (subcommand === "advanced-search") {
+      const query = interaction.options.get("query");
+      const title = interaction.options.get("title");
+      const description = interaction.options.get("description");
+      const location = interaction.options.get("location");
+      const keywords = interaction.options.get("keywords");
+      const id = interaction.options.get("id");
+      const center = interaction.options.get("center");
+
+      url += `?media_type=image`;
+
+      if (query) url += `&q=${query["value"]}`;
+      if (title) url += `&title=${title["value"]}`;
+      if (description) url += `&description=${description["value"]}`;
+      if (location) url += `&location=${location["value"]}`;
+      if (keywords) url += `&keywords=${keywords["value"]}`;
+      if (id) url += `&nasa_id=${id["value"]}`;
+      if (center) url += `&center=${center["value"]}`;
+    }
   },
   data: new SlashCommandBuilder()
     .setName("image")
-    .setDescription("Search for an image")
+    .setDescription("Search for an image.")
     .addSubcommand((subcommand) =>
       subcommand
         .setName("search")
@@ -82,30 +102,32 @@ module.exports = {
           option
             .setName("query")
             .setDescription("Query to search for.")
-            .setRequired(false)
+            .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("title")
-            .setDescription("Terms to search for in the title.")
+            .setDescription("Term to search for in the title.")
             .setRequired(false)
         )
         .addStringOption((option) =>
           option
             .setName("description")
-            .setDescription("Terms to search for in the description.")
+            .setDescription("Term to search for in the description.")
             .setRequired(false)
         )
         .addStringOption((option) =>
           option
             .setName("location")
-            .setDescription("Terms to search for in the location.")
+            .setDescription("Term to search for in the location.")
             .setRequired(false)
         )
         .addStringOption((option) =>
           option
             .setName("keywords")
-            .setDescription("Terms to search for in the description.")
+            .setDescription(
+              "Terms to search for in the description (separate multiple with commas)."
+            )
             .setRequired(false)
         )
         .addStringOption((option) =>
@@ -113,6 +135,28 @@ module.exports = {
             .setName("id")
             .setDescription("Show the picture of the specified Id.")
             .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("center")
+            .setDescription("Term to search for in the centers.")
+            .setRequired(false)
+            .addChoices(
+              { name: "Headquarters", value: "hq" },
+              { name: "Goddard Space Flight Center", value: "gsfc" },
+              { name: "John H. Glenn Research Center", value: "grc" },
+              { name: "Langley Research Center", value: "larc" },
+              { name: "John F. Kennedy Space Center", value: "ksc" },
+              { name: "George C. Marshall Space Flight Center", value: "MSFC" },
+              { name: "Stennis Space Center", value: "ssc" },
+              { name: "Lyndon B. Johnson Space Center", value: "jsc" },
+              {
+                name: "Neil A. Armstrong Flight Research Center",
+                value: "afrc",
+              },
+              { name: "Jet Propulsion Laboratory", value: "jpl" },
+              { name: "Ames Research Center", value: "arc" }
+            )
         )
     ),
   underDev: true,
