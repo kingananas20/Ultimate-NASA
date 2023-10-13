@@ -1,4 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  channelLink,
+} = require("discord.js");
 const ColorThief = require("colorthief");
 
 function getData(url) {
@@ -39,15 +43,28 @@ module.exports = {
         data = data["items"][chosen_image];
 
         const image = data["links"][0]["href"];
-
         color = (await ColorThief.getColor(image)) || "Red";
+        data = data["data"][0];
 
-        let title = data["data"][0]["title"];
+        let title = data["title"];
         if (title.length > 32) title = title.slice(0, 32);
 
         const embed = new EmbedBuilder()
           .setTitle(`${title}`)
-          .setDescription(`${data["data"][0]["description"]}`)
+          .setDescription(`${data["description"]}`)
+          .addFields(
+            {
+              name: "Center",
+              value: `${data["center"]}`,
+              inline: true,
+            },
+            {
+              name: "Location",
+              value: `${data["location"]}`,
+              inline: true,
+            },
+            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+          )
           .setImage(image)
           .setColor(color)
           .setFooter({ text: "Provided by NASA Image and Video Library" });
@@ -76,11 +93,57 @@ module.exports = {
       if (keywords) url += `&keywords=${keywords["value"]}`;
       if (id) url += `&nasa_id=${id["value"]}`;
       if (center) url += `&center=${center["value"]}`;
+
+      async function fetchData(url) {
+        let data = await getData(url);
+        data = data["collection"];
+
+        if (data["items"].length === 0)
+          return interaction.reply({
+            content: "No pictures match your search.",
+            ephemeral: true,
+          });
+
+        images_amount = data["items"].length;
+        chosen_image = Math.floor(Math.random() * images_amount);
+        data = data["items"][chosen_image];
+
+        const image = data["links"][0]["href"];
+        const color = await ColorThief.getColor(image);
+        data = data["data"][0];
+
+        let title = data["title"];
+        if (title.length > 32) title = title.slice(0, 32);
+
+        const embed = new EmbedBuilder()
+          .setTitle(`${title}`)
+          .setDescription(`${data["description"]}`)
+          .addFields(
+            {
+              name: "Center",
+              value: `${data["center"]}`,
+              inline: true,
+            },
+            {
+              name: "Location",
+              value: `${data["location"]}`,
+              inline: true,
+            },
+            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+          )
+          .setImage(image)
+          .setColor(color)
+          .setFooter({ text: "Provided by NASA Image and Video library" });
+
+        await interaction.reply({ embeds: [embed] });
+      }
+
+      fetchData(url);
     }
   },
   data: new SlashCommandBuilder()
     .setName("image")
-    .setDescription("Search for an image.")
+    .setDescription("Search for an image")
     .addSubcommand((subcommand) =>
       subcommand
         .setName("search")
@@ -102,7 +165,7 @@ module.exports = {
           option
             .setName("query")
             .setDescription("Query to search for.")
-            .setRequired(true)
+            .setRequired(false)
         )
         .addStringOption((option) =>
           option
