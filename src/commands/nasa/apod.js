@@ -61,9 +61,11 @@ module.exports = {
       if (date) {
         if (isDateInRange(date["value"]) && !isCurrentDate(date["value"]))
           url += `&date=${date["value"]}`;
+        else return interaction.reply({content: "Date is not in valid range!", ephemeral: true})
       }
 
       url += "&thumbs=true";
+      console.log(url)
 
       async function fetchData(url) {
         try {
@@ -77,7 +79,7 @@ module.exports = {
             .setColor(color)
             .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-          if (description === true)
+          if (description)
             embed.setDescription(`${data["explanation"]}`);
 
           if (data["media_type"] === "video") {
