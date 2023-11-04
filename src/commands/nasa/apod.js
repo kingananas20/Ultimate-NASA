@@ -1,43 +1,12 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const ColorThief = require("colorthief");
 require("dotenv").config();
-
-function isValidDate(dateString) {
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  return dateRegex.test(dateString);
-}
-
-function isDateInRange(dateString) {
-  if (isValidDate(dateString)) {
-    const inputDate = new Date(dateString);
-    const minDate = new Date("1995-06-16");
-    const currentDate = new Date();
-
-    return minDate < inputDate && inputDate < currentDate;
-  } else {
-    return false;
-  }
-}
-
-function isCurrentDate(dateString) {
-  const currentDate = new Date();
-  const formattedCurrentDate = currentDate.toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
-
-  return dateString === formattedCurrentDate;
-}
-
-function getData(url) {
-  return fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-    });
-}
+const {
+  getData,
+  isValidDate,
+  isCurrentDate,
+  isDateInRange,
+} = require("../../common.js");
 
 /*async function fetchData(url) {
   try {
@@ -61,11 +30,14 @@ module.exports = {
       if (date) {
         if (isDateInRange(date["value"]) && !isCurrentDate(date["value"]))
           url += `&date=${date["value"]}`;
-        else return interaction.reply({content: "Date is not in valid range!", ephemeral: true})
+        else
+          return interaction.reply({
+            content: "Date must not be older than 1995-06-16!",
+            ephemeral: true,
+          });
       }
 
       url += "&thumbs=true";
-      console.log(url)
 
       async function fetchData(url) {
         try {
@@ -79,8 +51,7 @@ module.exports = {
             .setColor(color)
             .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-          if (description)
-            embed.setDescription(`${data["explanation"]}`);
+          if (description) embed.setDescription(`${data["explanation"]}`);
 
           if (data["media_type"] === "video") {
             embed.setURL(data["url"]);
@@ -88,7 +59,10 @@ module.exports = {
 
           await interaction.reply({ embeds: [embed.toJSON()] });
         } catch (error) {
-          console.log(error);
+          await interaction.reply({
+            content: "Something went wrong! Please try again.",
+            ephemeral: true,
+          });
         }
       }
 
@@ -121,7 +95,10 @@ module.exports = {
 
           await interaction.reply({ embeds: [embed] });
         } catch (error) {
-          console.log(error);
+          await interaction.reply({
+            content: "Something went wrong! Please try again.",
+            ephemeral: true,
+          });
         }
       }
 

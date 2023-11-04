@@ -7,19 +7,7 @@ const {
 } = require("discord.js");
 require("dotenv").config();
 const ColorThief = require("colorthief");
-
-function getData(url) {
-  return fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-    });
-}
+const { getData } = require("../../common.js");
 
 module.exports = {
   run: ({ interaction, client }) => {

@@ -4,19 +4,7 @@ const {
   channelLink,
 } = require("discord.js");
 const ColorThief = require("colorthief");
-
-function getData(url) {
-  return fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the fetch operation:", error);
-    });
-}
+const { getData } = require("../../common.js");
 
 module.exports = {
   run: ({ interaction }) => {
@@ -29,47 +17,54 @@ module.exports = {
       url += `?q=${query}&media_type=image`;
 
       async function fetchData(url) {
-        let data = await getData(url);
-        data = data["collection"];
+        try {
+          let data = await getData(url);
+          data = data["collection"];
 
-        if (data["items"].length === 0)
-          return interaction.reply({
-            content: `The search ${query} doesn't have any pictures.`,
+          if (data["items"].length === 0)
+            return interaction.reply({
+              content: `The search ${query} doesn't have any pictures.`,
+              ephemeral: true,
+            });
+
+          const images_amount = data["items"].length;
+          const chosen_image = Math.floor(Math.random() * images_amount);
+          data = data["items"][chosen_image];
+
+          const image = data["links"][0]["href"];
+          color = (await ColorThief.getColor(image)) || "Red";
+          data = data["data"][0];
+
+          let title = data["title"];
+          if (title.length > 32) title = title.slice(0, 32);
+
+          const embed = new EmbedBuilder()
+            .setTitle(`${title}`)
+            .setDescription(`${data["description"]}`)
+            .addFields(
+              {
+                name: "Center",
+                value: `${data["center"]}`,
+                inline: true,
+              },
+              {
+                name: "Location",
+                value: `${data["location"]}`,
+                inline: true,
+              },
+              { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+            )
+            .setImage(image)
+            .setColor(color)
+            .setFooter({ text: "Provided by NASA Image and Video Library" });
+
+          await interaction.reply({ embeds: [embed] });
+        } catch {
+          await interaction.reply({
+            content: "Something went wrong! Please try again.",
             ephemeral: true,
           });
-
-        const images_amount = data["items"].length;
-        const chosen_image = Math.floor(Math.random() * images_amount);
-        data = data["items"][chosen_image];
-
-        const image = data["links"][0]["href"];
-        color = (await ColorThief.getColor(image)) || "Red";
-        data = data["data"][0];
-
-        let title = data["title"];
-        if (title.length > 32) title = title.slice(0, 32);
-
-        const embed = new EmbedBuilder()
-          .setTitle(`${title}`)
-          .setDescription(`${data["description"]}`)
-          .addFields(
-            {
-              name: "Center",
-              value: `${data["center"]}`,
-              inline: true,
-            },
-            {
-              name: "Location",
-              value: `${data["location"]}`,
-              inline: true,
-            },
-            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
-          )
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by NASA Image and Video Library" });
-
-        await interaction.reply({ embeds: [embed] });
+        }
       }
 
       fetchData(url);
@@ -95,47 +90,54 @@ module.exports = {
       if (center) url += `&center=${center["value"]}`;
 
       async function fetchData(url) {
-        let data = await getData(url);
-        data = data["collection"];
+        try {
+          let data = await getData(url);
+          data = data["collection"];
 
-        if (data["items"].length === 0)
-          return interaction.reply({
-            content: "No pictures match your search.",
+          if (data["items"].length === 0)
+            return interaction.reply({
+              content: "No pictures match your search.",
+              ephemeral: true,
+            });
+
+          images_amount = data["items"].length;
+          chosen_image = Math.floor(Math.random() * images_amount);
+          data = data["items"][chosen_image];
+
+          const image = data["links"][0]["href"];
+          const color = await ColorThief.getColor(image);
+          data = data["data"][0];
+
+          let title = data["title"];
+          if (title.length > 32) title = title.slice(0, 32);
+
+          const embed = new EmbedBuilder()
+            .setTitle(`${title}`)
+            .setDescription(`${data["description"]}`)
+            .addFields(
+              {
+                name: "Center",
+                value: `${data["center"]}`,
+                inline: true,
+              },
+              {
+                name: "Location",
+                value: `${data["location"]}`,
+                inline: true,
+              },
+              { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+            )
+            .setImage(image)
+            .setColor(color)
+            .setFooter({ text: "Provided by NASA Image and Video library" });
+
+          await interaction.reply({ embeds: [embed] });
+        } catch {
+          await interaction.reply({
+            content: "Something went wrong! Please try again.",
             ephemeral: true,
           });
-
-        images_amount = data["items"].length;
-        chosen_image = Math.floor(Math.random() * images_amount);
-        data = data["items"][chosen_image];
-
-        const image = data["links"][0]["href"];
-        const color = await ColorThief.getColor(image);
-        data = data["data"][0];
-
-        let title = data["title"];
-        if (title.length > 32) title = title.slice(0, 32);
-
-        const embed = new EmbedBuilder()
-          .setTitle(`${title}`)
-          .setDescription(`${data["description"]}`)
-          .addFields(
-            {
-              name: "Center",
-              value: `${data["center"]}`,
-              inline: true,
-            },
-            {
-              name: "Location",
-              value: `${data["location"]}`,
-              inline: true,
-            },
-            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
-          )
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by NASA Image and Video library" });
-
-        await interaction.reply({ embeds: [embed] });
+        }
       }
 
       fetchData(url);
