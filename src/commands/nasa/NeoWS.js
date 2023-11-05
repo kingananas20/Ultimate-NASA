@@ -19,53 +19,49 @@ module.exports = {
         date = getDate();
         url += `&start_date=${date}&end_date=${date}`;
       }
-      console.log(url);
 
       async function fetchData(url) {
         try {
           let data = await getData(url);
 
-          if (
-            data &&
-            data.near_earth_objects &&
-            data.near_earth_objects[date]
-          ) {
-            data = data.near_earth_objects[date];
+          if (data["element_count"] === 0)
+            return await interaction.reply({
+              content: "No data available.",
+              ephemeral: true,
+            });
 
-            let embed = new EmbedBuilder()
-              .setTitle(`Near Earth Objects ${date}`)
-              .setDescription(`All the NEOs from ${date}`)
-              .setColor("DarkVividPink")
-              .setFooter({
-                text: "Provided by Near Earth Objects Web Service",
-              });
-            let neos = [];
+          data = data.near_earth_objects[date];
 
-            let length = 0;
-            if (data.length < 25) length = data.length;
-            else length = 25;
+          let embed = new EmbedBuilder()
+            .setTitle(`Near Earth Objects ${date}`)
+            .setDescription(`All the NEOs from ${date}`)
+            .setColor("DarkVividPink")
+            .setFooter({
+              text: "Provided by Near Earth Objects Web Service",
+            });
 
-            for (let i = 0; i < length; i++) {
-              let asteroid = data[i];
-              let name = asteroid["name"];
-              let id = asteroid["id"];
+          let neos = [];
+          let length = 0;
+          if (data.length < 25) length = data.length;
+          else length = 25;
 
-              field = {
-                name: `${name}`,
-                value: `${id}`,
-                inline: true,
-              };
+          for (let i = 0; i < length; i++) {
+            let asteroid = data[i];
+            let name = asteroid["name"];
+            let id = asteroid["id"];
 
-              neos.push(field);
-            }
+            field = {
+              name: `${name}`,
+              value: `${id}`,
+              inline: true,
+            };
 
-            embed.addFields(neos);
-
-            interaction.reply({ embeds: [embed] });
-            neos = [];
-          } else {
-            interaction.reply("Data not available for the specified date.");
+            neos.push(field);
           }
+
+          embed.addFields(neos);
+
+          await interaction.reply({ embeds: [embed] });
         } catch {
           await interaction.reply({
             content: "Something went wrong! Please try again.",
