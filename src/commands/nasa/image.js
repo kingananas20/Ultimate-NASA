@@ -100,8 +100,8 @@ module.exports = {
               ephemeral: true,
             });
 
-          images_amount = data["items"].length;
-          chosen_image = Math.floor(Math.random() * images_amount);
+          const images_amount = data["items"].length;
+          const chosen_image = Math.floor(Math.random() * images_amount);
           data = data["items"][chosen_image];
 
           const image = data["links"][0]["href"];
