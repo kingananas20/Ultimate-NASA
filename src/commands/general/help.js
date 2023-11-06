@@ -5,31 +5,31 @@ const {
   StringSelectMenuOptionBuilder,
   ActionRowBuilder,
   ComponentType,
+  DiscordAPIError,
 } = require("discord.js");
+const fs = require("fs");
+const path = require("path");
 
 async function run({ interaction }) {
   const commands = [
     {
-      label: "Ping",
-      value: "ping",
-    },
-    {
-      label: "APOD",
+      label: "apod",
       value: "apod",
     },
-    {
-      label: "Image",
-      value: "image",
-    },
-    {
-      label: "MRP",
-      value: "mrp",
-    },
-    {
-      label: "NeoWS",
-      value: "neows",
-    },
   ];
+
+  fs.readdirSync(path.join(__dirname, "..")).forEach((file) => {
+    if (file.endsWith(".js")) {
+      const { data } = require(`../general/${file}` || `../nasa/${file}`);
+      const command = {
+        name: `${data["name"]}`,
+      };
+
+      commands.push(command);
+    }
+  });
+
+  console.log(commands);
 
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(interaction.id)

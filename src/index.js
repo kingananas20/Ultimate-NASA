@@ -1,4 +1,4 @@
-const { Client, IntentsBitField, EmbedBuilder } = require("discord.js");
+const { Client, IntentsBitField } = require("discord.js");
 const { CommandKit } = require("commandkit");
 const path = require("path");
 require("dotenv").config();
