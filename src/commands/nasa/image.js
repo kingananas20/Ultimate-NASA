@@ -221,6 +221,7 @@ const data = new SlashCommandBuilder()
             { name: "Ames Research Center", value: "arc" }
           )
       )
-  );
+  )
+  .toJSON();
 
 module.exports = { data, run };

@@ -127,6 +127,7 @@ const data = new SlashCommandBuilder()
           .setDescription("Should there be a description (default true).")
           .setRequired(false)
       )
-  );
+  )
+  .toJSON();
 
 module.exports = { data, run };

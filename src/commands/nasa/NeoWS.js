@@ -199,6 +199,7 @@ const data = new SlashCommandBuilder()
           .setDescription("SPK-ID of the object.")
           .setRequired(true)
       )
-  );
+  )
+  .toJSON();
 
 module.exports = { data, run };

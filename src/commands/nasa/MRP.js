@@ -237,8 +237,7 @@ const data = new SlashCommandBuilder()
             { name: "Spirit", value: "spirit" }
           )
       )
-  );
+  )
+  .toJSON();
 
-const underDev = true;
-
-module.exports = { data, run, underDev };
+module.exports = { data, run, underDev: true };

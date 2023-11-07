@@ -65,6 +65,7 @@ async function run({ interaction }) {
 
 const data = new SlashCommandBuilder()
   .setName("help")
-  .setDescription("Shows informations about the commands.");
+  .setDescription("Shows informations about the commands.")
+  .toJSON();
 
 module.exports = { data, run };
