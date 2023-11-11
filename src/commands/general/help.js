@@ -5,31 +5,44 @@ const {
   StringSelectMenuOptionBuilder,
   ActionRowBuilder,
   ComponentType,
-  DiscordAPIError,
 } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
 
 async function run({ interaction }) {
-  const commands = [
-    {
-      label: "apod",
-      value: "apod",
-    },
-  ];
+  const commands = [];
+  const embeds = [];
 
-  fs.readdirSync(path.join(__dirname, "..")).forEach((file) => {
-    if (file.endsWith(".js")) {
-      const { data } = require(`../general/${file}` || `../nasa/${file}`);
-      const command = {
-        name: `${data["name"]}`,
-      };
+  function collectCommands(directoryPath) {
+    fs.readdirSync(directoryPath).forEach((file) => {
+      const filePath = path.join(directoryPath, file);
 
-      commands.push(command);
-    }
-  });
+      if (fs.statSync(filePath).isDirectory()) {
+        collectCommands(filePath);
+      } else if (file.endsWith(".js")) {
+        try {
+          const command = require(filePath).data;
+          commands.push(command);
+        } catch (error) {
+          console.error(`Error importing ${filePath}: ${error}`);
+        }
+      }
+    });
+  }
 
-  console.log(commands);
+  function makeEmbeds() {
+    if (commands.length === 0) return;
+
+    commands.forEach((command) => {
+      let embed = new EmbedBuilder()
+        .setName(`${command["name"]}`)
+        .setDescription(`${command["description"]}`)
+        .setColor(15, 117, 87);
+    });
+  }
+
+  collectCommands(path.join(__dirname, ".."));
+  console.log(commands[4]["options"][0]["options"]);
 
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(interaction.id)
@@ -39,8 +52,8 @@ async function run({ interaction }) {
     .addOptions(
       commands.map((command) =>
         new StringSelectMenuOptionBuilder()
-          .setLabel(command["label"])
-          .setValue(command["value"])
+          .setLabel(command["name"])
+          .setValue(command["name"])
       )
     );
 
