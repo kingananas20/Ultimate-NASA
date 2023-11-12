@@ -15,58 +15,54 @@ async function run({ interaction }) {
 
     url += `?q=${query}&media_type=image`;
 
-    async function fetchData(url) {
-      try {
-        let data = await getData(url);
-        data = data["collection"];
+    try {
+      let data = await getData(url);
+      data = data["collection"];
 
-        if (data["items"].length === 0)
-          return interaction.reply({
-            content: `The search ${query} doesn't have any pictures.`,
-            ephemeral: true,
-          });
-
-        const images_amount = data["items"].length;
-        const chosen_image = Math.floor(Math.random() * images_amount);
-        data = data["items"][chosen_image];
-
-        const image = data["links"][0]["href"];
-        color = (await ColorThief.getColor(image)) || "Red";
-        data = data["data"][0];
-
-        let title = data["title"];
-        if (title.length > 32) title = title.slice(0, 32);
-
-        const embed = new EmbedBuilder()
-          .setTitle(`${title}`)
-          .setDescription(`${data["description"]}`)
-          .addFields(
-            {
-              name: "Center",
-              value: `${data["center"]}`,
-              inline: true,
-            },
-            {
-              name: "Location",
-              value: `${data["location"]}`,
-              inline: true,
-            },
-            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
-          )
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by NASA Image and Video Library" });
-
-        await interaction.reply({ embeds: [embed] });
-      } catch {
-        await interaction.reply({
-          content: "Something went wrong! Please try again.",
+      if (data["items"].length === 0)
+        return interaction.reply({
+          content: `The search ${query} doesn't have any pictures.`,
           ephemeral: true,
         });
-      }
-    }
 
-    fetchData(url);
+      const images_amount = data["items"].length;
+      const chosen_image = Math.floor(Math.random() * images_amount);
+      data = data["items"][chosen_image];
+
+      const image = data["links"][0]["href"];
+      color = (await ColorThief.getColor(image)) || "Red";
+      data = data["data"][0];
+
+      let title = data["title"];
+      if (title.length > 32) title = title.slice(0, 32);
+
+      const embed = new EmbedBuilder()
+        .setTitle(`${title}`)
+        .setDescription(`${data["description"]}`)
+        .addFields(
+          {
+            name: "Center",
+            value: `${data["center"]}`,
+            inline: true,
+          },
+          {
+            name: "Location",
+            value: `${data["location"]}`,
+            inline: true,
+          },
+          { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+        )
+        .setImage(image)
+        .setColor(color)
+        .setFooter({ text: "Provided by NASA Image and Video Library" });
+
+      await interaction.reply({ embeds: [embed] });
+    } catch {
+      await interaction.reply({
+        content: "Something went wrong! Please try again.",
+        ephemeral: true,
+      });
+    }
   }
 
   if (subcommand === "advanced-search") {
@@ -88,58 +84,54 @@ async function run({ interaction }) {
     if (id) url += `&nasa_id=${id["value"]}`;
     if (center) url += `&center=${center["value"]}`;
 
-    async function fetchData(url) {
-      try {
-        let data = await getData(url);
-        data = data["collection"];
+    try {
+      let data = await getData(url);
+      data = data["collection"];
 
-        if (data["items"].length === 0)
-          return interaction.reply({
-            content: "No pictures match your search.",
-            ephemeral: true,
-          });
-
-        const images_amount = data["items"].length;
-        const chosen_image = Math.floor(Math.random() * images_amount);
-        data = data["items"][chosen_image];
-
-        const image = data["links"][0]["href"];
-        const color = await ColorThief.getColor(image);
-        data = data["data"][0];
-
-        let title = data["title"];
-        if (title.length > 32) title = title.slice(0, 32);
-
-        const embed = new EmbedBuilder()
-          .setTitle(`${title}`)
-          .setDescription(`${data["description"]}`)
-          .addFields(
-            {
-              name: "Center",
-              value: `${data["center"]}`,
-              inline: true,
-            },
-            {
-              name: "Location",
-              value: `${data["location"]}`,
-              inline: true,
-            },
-            { name: "Id", value: `${data["nasa_id"]}`, inline: true }
-          )
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by NASA Image and Video library" });
-
-        await interaction.reply({ embeds: [embed] });
-      } catch {
-        await interaction.reply({
-          content: "Something went wrong! Please try again.",
+      if (data["items"].length === 0)
+        return interaction.reply({
+          content: "No pictures match your search.",
           ephemeral: true,
         });
-      }
-    }
 
-    fetchData(url);
+      const images_amount = data["items"].length;
+      const chosen_image = Math.floor(Math.random() * images_amount);
+      data = data["items"][chosen_image];
+
+      const image = data["links"][0]["href"];
+      const color = await ColorThief.getColor(image);
+      data = data["data"][0];
+
+      let title = data["title"];
+      if (title.length > 32) title = title.slice(0, 32);
+
+      const embed = new EmbedBuilder()
+        .setTitle(`${title}`)
+        .setDescription(`${data["description"]}`)
+        .addFields(
+          {
+            name: "Center",
+            value: `${data["center"]}`,
+            inline: true,
+          },
+          {
+            name: "Location",
+            value: `${data["location"]}`,
+            inline: true,
+          },
+          { name: "Id", value: `${data["nasa_id"]}`, inline: true }
+        )
+        .setImage(image)
+        .setColor(color)
+        .setFooter({ text: "Provided by NASA Image and Video library" });
+
+      await interaction.reply({ embeds: [embed] });
+    } catch {
+      await interaction.reply({
+        content: "Something went wrong! Please try again.",
+        ephemeral: true,
+      });
+    }
   }
 }
 

@@ -28,34 +28,30 @@ async function run({ interaction }) {
 
     url += "&thumbs=true";
 
-    async function fetchData(url) {
-      try {
-        const data = await getData(url);
-        const image = data["thumbnail_url"] || data["url"];
-        const color = await ColorThief.getColor(image);
+    try {
+      const data = await getData(url);
+      const image = data["thumbnail_url"] || data["url"];
+      const color = await ColorThief.getColor(image);
 
-        let embed = new EmbedBuilder()
-          .setTitle(`${data["title"]}`)
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by Astronomy Picture of the Day" });
+      let embed = new EmbedBuilder()
+        .setTitle(`${data["title"]}`)
+        .setImage(image)
+        .setColor(color)
+        .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-        if (description) embed.setDescription(`${data["explanation"]}`);
+      if (description) embed.setDescription(`${data["explanation"]}`);
 
-        if (data["media_type"] === "video") {
-          embed.setURL(data["url"]);
-        }
-
-        await interaction.reply({ embeds: [embed.toJSON()] });
-      } catch (error) {
-        await interaction.reply({
-          content: "Something went wrong! Please try again.",
-          ephemeral: true,
-        });
+      if (data["media_type"] === "video") {
+        embed.setURL(data["url"]);
       }
-    }
 
-    fetchData(url);
+      await interaction.reply({ embeds: [embed.toJSON()] });
+    } catch (error) {
+      await interaction.reply({
+        content: "Something went wrong! Please try again.",
+        ephemeral: true,
+      });
+    }
   }
 
   if (subcommand === "random") {
@@ -63,35 +59,31 @@ async function run({ interaction }) {
 
     url += `&count=1&thumbs=true`;
 
-    async function fetchData(url) {
-      try {
-        const data = await getData(url);
-        const image = data[0]["thumbnail_url"] || data[0]["url"];
-        const color = await ColorThief.getColor(image);
+    try {
+      const data = await getData(url);
+      const image = data[0]["thumbnail_url"] || data[0]["url"];
+      const color = await ColorThief.getColor(image);
 
-        let embed = new EmbedBuilder()
-          .setTitle(`${data[0]["title"]}`)
-          .setImage(image)
-          .setColor(color)
-          .setFooter({ text: "Provided by Astronomy Picture of the Day" });
+      let embed = new EmbedBuilder()
+        .setTitle(`${data[0]["title"]}`)
+        .setImage(image)
+        .setColor(color)
+        .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-        if (description === true)
-          embed.setDescription(`${data[0]["explanation"]}`);
+      if (description === true)
+        embed.setDescription(`${data[0]["explanation"]}`);
 
-        if (data[0]["media_type"] === "video") {
-          embed.setURL(data[0]["url"]);
-        }
-
-        await interaction.reply({ embeds: [embed] });
-      } catch (error) {
-        await interaction.reply({
-          content: "Something went wrong! Please try again.",
-          ephemeral: true,
-        });
+      if (data[0]["media_type"] === "video") {
+        embed.setURL(data[0]["url"]);
       }
-    }
 
-    fetchData(url);
+      await interaction.reply({ embeds: [embed] });
+    } catch (error) {
+      await interaction.reply({
+        content: "Something went wrong! Please try again.",
+        ephemeral: true,
+      });
+    }
   }
 }
 

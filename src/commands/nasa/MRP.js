@@ -29,7 +29,7 @@ async function run({ interaction, client }) {
 
     let embeds = [];
 
-    async function fetchData(url) {
+    try {
       let data = await getData(url);
       data = data["photos"];
 
@@ -70,16 +70,19 @@ async function run({ interaction, client }) {
       const row = new ActionRowBuilder().addComponents(back, next);
 
       await interaction.reply({ embeds: [embeds], components: [row] });
+    } catch (error) {
+      interaction.reply({
+        content: "Something went wrong! PLease try again.",
+        ephemeral: true,
+      });
     }
-
-    fetchData(url);
   }
 
   if (subcommand === "info") {
     const rover = interaction.options.get("rover")["value"];
     url += `manifests/${rover}?api_key=${process.env.APIKEY}`;
 
-    async function fetchData(url) {
+    try {
       let data = await getData(url);
       data = await data["photo_manifest"];
 
@@ -115,9 +118,12 @@ async function run({ interaction, client }) {
         .setFooter({ text: "Provided by Mars Rover Photos" });
 
       interaction.reply({ embeds: [embed] });
+    } catch (error) {
+      interaction.reply({
+        content: "Something went wrong! Please try again.",
+        ephemeral: true,
+      });
     }
-
-    fetchData(url);
   }
 }
 

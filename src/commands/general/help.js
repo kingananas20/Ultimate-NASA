@@ -11,7 +11,7 @@ const path = require("path");
 
 async function run({ interaction }) {
   const commands = [];
-  const embeds = [];
+  const commandEmbeds = [];
 
   function collectCommands(directoryPath) {
     fs.readdirSync(directoryPath).forEach((file) => {
@@ -34,15 +34,35 @@ async function run({ interaction }) {
     if (commands.length === 0) return;
 
     commands.forEach((command) => {
-      let embed = new EmbedBuilder()
-        .setName(`${command["name"]}`)
+      let commandEmbed = new EmbedBuilder()
+        .setTitle(`${command["name"]}`)
         .setDescription(`${command["description"]}`)
         .setColor(15, 117, 87);
+
+      if (command["options"].length === 0)
+        return commandEmbeds.push(commandEmbed.toJSON());
+
+      command["options"].forEach((option) => {
+        const field = {
+          name: `${option["name"]}`,
+          value: `${option["description"]}`,
+          inline: true,
+        };
+
+        commandEmbed.addFields(field);
+      });
+
+      commandEmbeds.push(commandEmbed.toJSON());
     });
   }
 
   collectCommands(path.join(__dirname, ".."));
+  console.log(commands);
+  console.log(commands[4]["options"]);
   console.log(commands[4]["options"][0]["options"]);
+
+  makeEmbeds();
+  console.log(commandEmbeds);
 
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(interaction.id)
@@ -60,7 +80,11 @@ async function run({ interaction }) {
   const actionRow = new ActionRowBuilder().addComponents(selectMenu);
 
   const reply = await interaction.reply({
-    content: "Help",
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("Help")
+        .setDescription("Useful information about the commands."),
+    ],
     components: [actionRow],
   });
 
@@ -81,4 +105,4 @@ const data = new SlashCommandBuilder()
   .setDescription("Shows informations about the commands.")
   .toJSON();
 
-module.exports = { data, run };
+module.exports = { data, run, underDev: true };
