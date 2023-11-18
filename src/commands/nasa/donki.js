@@ -29,6 +29,7 @@ async function run({ interaction }) {
       });
 
     data = data[Math.floor(Math.random() * data.length)];
+    console.log(data);
 
     if (api === "CME") {
       embed
@@ -45,6 +46,9 @@ async function run({ interaction }) {
         );
     }
     if (api === "GST") {
+      embed
+        .setTitle(`Geomagnetic Storm from ${date}`)
+        .setDescription(`ID: ${data["gstID"]}`);
     }
     if (api === "IPS") {
     }
@@ -96,10 +100,10 @@ const data = new SlashCommandBuilder()
     option
       .setName("date")
       .setDescription(
-        "Date to get the data (default = 7 days prior to current date)"
+        "Date (YYYY-MM-DD) to get the data (default = 7 days prior to current date)"
       )
       .setRequired(false)
   )
   .toJSON();
 
-module.exports = { data, run, underDev: true };
+module.exports = { data, run, underDev: true, beta: true };

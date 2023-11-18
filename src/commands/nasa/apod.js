@@ -39,7 +39,7 @@ async function run({ interaction }) {
         .setColor(color)
         .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-      if (description) embed.setDescription(`${data["explanation"]}`);
+      if (description["value"]) embed.setDescription(`${data["explanation"]}`);
 
       if (data["media_type"] === "video") {
         embed.setURL(data["url"]);
@@ -65,7 +65,7 @@ async function run({ interaction }) {
       const color = await ColorThief.getColor(image);
 
       let embed = new EmbedBuilder()
-        .setTitle(`${data[0]["title"]}`)
+        .setTitle(`${data[0]["title"]} (${data[0]["date"]})`)
         .setImage(image)
         .setColor(color)
         .setFooter({ text: "Provided by Astronomy Picture of the Day" });
