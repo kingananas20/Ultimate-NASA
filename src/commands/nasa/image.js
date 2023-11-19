@@ -66,23 +66,42 @@ async function run({ interaction }) {
   }
 
   if (subcommand === "advanced-search") {
-    const query = interaction.options.get("query");
-    const title = interaction.options.get("title");
-    const description = interaction.options.get("description");
-    const location = interaction.options.get("location");
-    const keywords = interaction.options.get("keywords");
-    const id = interaction.options.get("id");
-    const center = interaction.options.get("center");
-
     url += `?media_type=image`;
-
-    if (query) url += `&q=${query["value"]}`;
-    if (title) url += `&title=${title["value"]}`;
-    if (description) url += `&description=${description["value"]}`;
-    if (location) url += `&location=${location["value"]}`;
-    if (keywords) url += `&keywords=${keywords["value"]}`;
-    if (id) url += `&nasa_id=${id["value"]}`;
-    if (center) url += `&center=${center["value"]}`;
+    url +=
+      interaction.options.get("query") !== undefined &&
+      interaction.options.get("query") !== null
+        ? `&q=${interaction.options.get("query")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("title") !== undefined &&
+      interaction.options.get("title") !== null
+        ? `&title=${interaction.options.get("title")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("description") !== undefined &&
+      interaction.options.get("description") !== null
+        ? `&description=${interaction.options.get("description")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("location") !== undefined &&
+      interaction.options.get("location") !== null
+        ? `&location=${interaction.options.get("location")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("keywords") !== undefined &&
+      interaction.options.get("keywords") !== null
+        ? `&keywords=${interaction.options.get("keywords")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("id") !== undefined &&
+      interaction.options.get("id") !== null
+        ? `&nasa_id${interaction.options.get("id")["value"]}`
+        : "";
+    url +=
+      interaction.options.get("center") !== undefined &&
+      interaction.options.get("center") !== null
+        ? `&center=${interaction.options.get("center")["value"]}`
+        : "";
 
     try {
       let data = await getData(url);

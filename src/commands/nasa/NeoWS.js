@@ -7,17 +7,14 @@ async function run({ interaction }) {
   let url = `https://api.nasa.gov/neo/rest/v1/`;
 
   if (subcommand === "feed") {
-    let date = interaction.options.get("date");
+    let date =
+      interaction.options.get("date") !== undefined
+        ? interaction.options.get("date")["value"]
+        : getDate();
 
-    url += `feed?api_key=${process.env.APIKEY}`;
+    if (!isValidDate(date)) date = getDate();
 
-    if (date && isValidDate(date["value"])) {
-      date = date["value"];
-      url += `&start_date=${date}&end_date=${date}`;
-    } else {
-      date = getDate();
-      url += `&start_date=${date}&end_date=${date}`;
-    }
+    url += `feed?api_key=${process.env.APIKEY}&date=${date}`;
 
     try {
       let data = await getData(url);

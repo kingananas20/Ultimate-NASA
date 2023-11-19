@@ -7,10 +7,6 @@ module.exports = async ({ interaction, commandObj }) => {
     fs.readFileSync("src/json/beta-testers.json")
   );
 
-  console.log(betaTesters);
-
-  console.log(interaction.user.id);
-  console.log(betaTesters.find((id) => id["userID"] === interaction.user.id));
   if (betaTesters.find((id) => id["userID"] === interaction.user.id))
     return false;
 

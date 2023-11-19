@@ -4,10 +4,10 @@ require("dotenv").config();
 
 async function run({ interaction }) {
   const api = interaction.options.get("api")["value"];
-  let date = interaction.options.get("date");
-
-  if (!date) date = getDate();
-  else date = date["value"];
+  let date =
+    interaction.options.get("date") !== undefined
+      ? interaction.options.get("date")["value"]
+      : getDate();
 
   if (!isValidDate(date))
     return interaction.reply({

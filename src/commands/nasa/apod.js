@@ -14,7 +14,10 @@ async function run({ interaction }) {
 
   if (subcommand === "date") {
     const date = interaction.options.get("date");
-    const description = interaction.options.get("description") || true;
+    const description =
+      interaction.options.get("description") !== undefined
+        ? interaction.options.get("description")["value"]
+        : true;
 
     if (date) {
       if (isDateInRange(date["value"]) && !isCurrentDate(date["value"]))
@@ -39,7 +42,7 @@ async function run({ interaction }) {
         .setColor(color)
         .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-      if (description["value"]) embed.setDescription(`${data["explanation"]}`);
+      if (description) embed.setDescription(`${data["explanation"]}`);
 
       if (data["media_type"] === "video") {
         embed.setURL(data["url"]);
@@ -55,7 +58,10 @@ async function run({ interaction }) {
   }
 
   if (subcommand === "random") {
-    const description = interaction.options.get("description") || true;
+    const description =
+      interaction.options.get("description") !== undefined
+        ? interaction.options.get("descrption")["value"]
+        : true;
 
     url += `&count=1&thumbs=true`;
 
@@ -70,8 +76,7 @@ async function run({ interaction }) {
         .setColor(color)
         .setFooter({ text: "Provided by Astronomy Picture of the Day" });
 
-      if (description === true)
-        embed.setDescription(`${data[0]["explanation"]}`);
+      if (description) embed.setDescription(`${data[0]["explanation"]}`);
 
       if (data[0]["media_type"] === "video") {
         embed.setURL(data[0]["url"]);
