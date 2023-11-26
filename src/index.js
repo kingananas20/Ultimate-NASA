@@ -14,6 +14,7 @@ new CommandKit({
   validationsPath: path.join(__dirname, "validations"),
   devGuildIds: ["1008702315798216725"],
   devUserIds: ["863480661007138858"],
+  bulkRegister: true,
 });
 
 client.login(process.env.TOKEN);

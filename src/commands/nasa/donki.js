@@ -106,4 +106,6 @@ const data = new SlashCommandBuilder()
   )
   .toJSON();
 
-module.exports = { data, run, underDev: true, beta: true };
+const options = { underDev: true, beta: true };
+
+module.exports = { data, run, options };

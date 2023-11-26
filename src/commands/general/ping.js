@@ -17,4 +17,6 @@ async function run({ client, interaction }) {
   );
 }
 
-module.exports = { data, run, devOnly: true };
+const options = { devOnly: true };
+
+module.exports = { data, run, options };

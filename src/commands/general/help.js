@@ -105,4 +105,6 @@ const data = new SlashCommandBuilder()
   .setDescription("Shows informations about the commands.")
   .toJSON();
 
-module.exports = { data, run, underDev: true };
+const options = { underDev: true };
+
+module.exports = { data, run, options };
